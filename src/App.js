@@ -1,25 +1,35 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import axios from 'axios';
+
+import "./app.css";
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      text: "",
+    }
+  }
+
+  async componentDidMount() {
+    this.fetchApi();
+  }
+
+  fetchApi = async () => {
+    let res = await axios.get(`https://quotesondesign.com/wp-json/posts?filter[orderby]=rand&filter[posts_per_page]=1&timestamp=${new Date().getTime()}`);
+    res = res.data[0].content;
+    
+    this.setState({text: res });
+  }
+
   render() {
+    console.log(this.state);
+
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
+      <div className="app">
+        <div className="text" dangerouslySetInnerHTML={{__html: this.state.text}}>
+        </div>
+        <button onClick={this.fetchApi} className="btn">Generate</button>
       </div>
     );
   }
